@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>网创课堂 - 商品详情</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            color: #333;
+            background-color: #f7f8fa;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 手机壳样式 */
+        .device-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #111;
+            border-radius: 50px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 15px;
+        }
+        
+        /* 刘海区域 */
+        .notch {
+            position: absolute;
+            width: 180px;
+            height: 30px;
+            background-color: #111;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: 10;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            width: 140px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 3px;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        /* 手机屏幕 */
+        .screen {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* App内容区域 */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: #333;
+            font-size: 12px;
+            background-color: #fff;
+        }
+        
+        .status-bar .time {
+            font-weight: 600;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* 导航栏 */
+        .nav-bar {
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            background-color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-back {
+            display: flex;
+            align-items: center;
+            color: #333;
+        }
+        
+        .nav-title {
+            flex: 1;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            margin-right: 24px;
+        }
+        
+        .nav-btn {
+            color: #333;
+            font-size: 14px;
+        }
+        
+        /* 商品轮播 */
+        .product-slider {
+            width: 100%;
+            height: 240px;
+            background-image: url('https://img.freepik.com/free-vector/video-editing-software-interface-template_23-2148479875.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .slider-indicator {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .indicator-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .indicator-dot.active {
+            width: 16px;
+            background-color: #fff;
+        }
+        
+        /* 商品信息 */
+        .product-info {
+            padding: 16px;
+            background-color: #fff;
+        }
+        
+        .product-price {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 12px;
+        }
+        
+        .points-value {
+            color: #ff6b6b;
+            font-weight: 600;
+            font-size: 24px;
+            margin-right: 4px;
+        }
+        
+        .points-unit {
+            color: #ff6b6b;
+            font-size: 14px;
+        }
+        
+        .original-price {
+            color: #999;
+            font-size: 14px;
+            margin-left: 8px;
+            text-decoration: line-through;
+        }
+        
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .product-tag {
+            background-color: #f0f9f4;
+            color: #4caf92;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .product-meta {
+            display: flex;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .meta-item {
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .meta-item i {
+            font-size: 16px;
+            margin-right: 4px;
+        }
+        
+        /* 服务保障 */
+        .service-section {
+            margin-top: 8px;
+            background-color: #fff;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .service-label {
+            color: #999;
+            font-size: 13px;
+            margin-right: 12px;
+        }
+        
+        .service-list {
+            flex: 1;
+            display: flex;
+            gap: 16px;
+        }
+        
+        .service-item {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .service-item i {
+            font-size: 14px;
+            color: #4caf92;
+            margin-right: 4px;
+        }
+        
+        /* 商品规格 */
+        .specs-section {
+            margin-top: 8px;
+            background-color: #fff;
+            padding: 12px 16px;
+        }
+        
+        .specs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .specs-title {
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .specs-more {
+            color: #999;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .specs-more i {
+            font-size: 16px;
+        }
+        
+        .specs-content {
+            display: flex;
+            align-items: center;
+        }
+        
+        .specs-label {
+            color: #999;
+            font-size: 13px;
+            margin-right: 12px;
+        }
+        
+        .specs-options {
+            flex: 1;
+        }
+        
+        .specs-option {
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .specs-option.active {
+            border-color: #4caf92;
+            color: #4caf92;
+            background-color: #f0f9f4;
+        }
+        
+        /* 商品详情 */
+        .detail-section {
+            margin-top: 8px;
+            background-color: #fff;
+        }
+        
+        .detail-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .detail-tabs {
+            display: flex;
+        }
+        
+        .detail-tab {
+            padding: 0 12px;
+            font-size: 15px;
+            color: #666;
+            position: relative;
+        }
+        
+        .detail-tab.active {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .detail-tab.active::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 3px;
+            background-color: #4caf92;
+            border-radius: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -12px;
+        }
+        
+        .detail-content {
+            padding: 16px;
+        }
+        
+        .detail-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .detail-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .detail-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin: 24px 0 12px;
+        }
+        
+        /* 商品评价 */
+        .review-section {
+            margin-top: 8px;
+            background-color: #fff;
+            padding: 16px;
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .review-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .review-count {
+            color: #999;
+            font-size: 13px;
+            font-weight: normal;
+            margin-left: 8px;
+        }
+        
+        .review-more {
+            color: #999;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .review-list {
+            margin-bottom: 12px;
+        }
+        
+        .review-item {
+            margin-bottom: 16px;
+        }
+        
+        .review-user {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background-color: #f5f5f5;
+            margin-right: 8px;
+            background-image: url('https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .user-name {
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .review-rating {
+            display: flex;
+            color: #ff9800;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        
+        .review-content {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .review-date {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* 相关推荐 */
+        .recommend-section {
+            margin-top: 8px;
+            background-color: #fff;
+            padding: 16px;
+        }
+        
+        .recommend-header {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 16px;
+        }
+        
+        .recommend-list {
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            gap: 12px;
+            padding-bottom: 8px;
+        }
+        
+        .recommend-list::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .recommend-item {
+            flex: 0 0 40%;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .recommend-image {
+            width: 100%;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .recommend-content {
+            padding: 8px;
+        }
+        
+        .recommend-title {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .recommend-price {
+            color: #ff6b6b;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .recommend-price-unit {
+            font-size: 12px;
+            font-weight: normal;
+        }
+        
+        /* 底部操作栏 */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #f5f5f5;
+            margin: 0 15px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            padding: 0 16px;
+        }
+        
+        .action-icons {
+            display: flex;
+            margin-right: 16px;
+        }
+        
+        .action-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 16px;
+            color: #666;
+        }
+        
+        .action-icon i {
+            font-size: 22px;
+            margin-bottom: 2px;
+        }
+        
+        .action-icon-label {
+            font-size: 10px;
+        }
+        
+        .action-buttons {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            height: 40px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-cart {
+            background-color: #f0f9f4;
+            color: #4caf92;
+        }
+        
+        .btn-buy {
+            background-color: #4caf92;
+            color: #fff;
+        }
+        
+        /* 图标 */
+        .icon {
+            font-family: "Material Icons";
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 页面底部空白区域 */
+        .bottom-space {
+            height: 20px;
+        }
+        
+        /* 广告位样式 */
+        .ad-banner {
+            margin: 15px 16px;
+            position: relative;
+        }
+        
+        .ad-wrapper {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ad-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .ad-tag {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 4px;
+            z-index: 1;
+        }
+        
+        .ad-card {
+            margin: 15px 16px;
+            background: linear-gradient(to right, #ff9d4d, #ff7f2e);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            position: relative;
+        }
+        
+        .ad-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ad-text {
+            flex: 1;
+        }
+        
+        .ad-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .ad-desc {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .ad-button {
+            background-color: white;
+            color: #ff7f2e;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机壳 -->
+    <div class="device-container">
+        <!-- 刘海 -->
+        <div class="notch"></div>
+        
+        <!-- 屏幕 -->
+        <div class="screen">
+            <!-- App内容 -->
+            <div class="app-container">
+                <!-- 状态栏 -->
+                <div class="status-bar">
+                    <div class="time">14:30</div>
+                    <div class="icons">
+                        <span class="icon" style="font-size: 14px;">signal_cellular_alt</span>
+                        <span class="icon" style="font-size: 14px;">wifi</span>
+                        <span class="icon" style="font-size: 14px;">battery_full</span>
+                    </div>
+                </div>
+                
+                <!-- 导航栏 -->
+                <div class="nav-bar">
+                    <div class="nav-back" onclick="window.location.href='points-mall.html'">
+                        <span class="icon" style="font-size: 24px;">arrow_back</span>
+                    </div>
+                    <div class="nav-title">商品详情</div>
+                    <div class="nav-btn">
+                        <span class="icon" style="font-size: 20px;">share</span>
+                    </div>
+                </div>
+                
+                <!-- 商品轮播 -->
+                <div class="product-slider">
+                    <div class="slider-indicator">
+                        <div class="indicator-dot active"></div>
+                        <div class="indicator-dot"></div>
+                        <div class="indicator-dot"></div>
+                    </div>
+                </div>
+                
+                <!-- 商品信息 -->
+                <div class="product-info">
+                    <div class="product-price">
+                        <div class="points-value">1280</div>
+                        <div class="points-unit">积分</div>
+                        <div class="original-price">1680积分</div>
+                    </div>
+                    <h1 class="product-title">视频剪辑工具会员（1个月）高级剪辑功能全场景适用</h1>
+                    <div class="product-tags">
+                        <span class="product-tag">热门</span>
+                        <span class="product-tag">限时优惠</span>
+                        <span class="product-tag">官方认证</span>
+                    </div>
+                    <div class="product-meta">
+                        <div class="meta-item">
+                            <i class="icon" style="font-size: 16px;">thumb_up</i>
+                            <span>98%好评</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="icon" style="font-size: 16px;">redeem</i>
+                            <span>2135人已兑换</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 服务保障 -->
+                <div class="service-section">
+                    <div class="service-label">服务</div>
+                    <div class="service-list">
+                        <div class="service-item">
+                            <i class="icon" style="font-size: 14px;">check_circle</i>
+                            <span>正品保障</span>
+                        </div>
+                        <div class="service-item">
+                            <i class="icon" style="font-size: 14px;">check_circle</i>
+                            <span>急速发货</span>
+                        </div>
+                        <div class="service-item">
+                            <i class="icon" style="font-size: 14px;">check_circle</i>
+                            <span>售后无忧</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商品规格 -->
+                <div class="specs-section">
+                    <div class="specs-header">
+                        <div class="specs-title">选择规格</div>
+                        <div class="specs-more">
+                            <span>查看全部</span>
+                            <i class="icon" style="font-size: 16px;">keyboard_arrow_right</i>
+                        </div>
+                    </div>
+                    <div class="specs-content">
+                        <div class="specs-label">会员时长</div>
+                        <div class="specs-options">
+                            <div class="specs-option active">1个月</div>
+                            <div class="specs-option">3个月</div>
+                            <div class="specs-option">12个月</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商品详情 -->
+                <div class="detail-section">
+                    <div class="detail-header">
+                        <div class="detail-tabs">
+                            <div class="detail-tab active">商品详情</div>
+                            <div class="detail-tab">规格参数</div>
+                            <div class="detail-tab">售后保障</div>
+                        </div>
+                    </div>
+                    <div class="detail-content">
+                        <img class="detail-image" src="https://img.freepik.com/free-vector/video-editing-software-interface-template_23-2148479875.jpg" alt="产品详情图">
+                        
+                        <h3 class="detail-subtitle">产品介绍</h3>
+                        <p class="detail-text">
+                            智能视频剪辑工具是一款基于AI技术的视频处理软件，能够帮助用户快速完成视频剪辑、添加特效、自动生成字幕等操作。无论是短视频创作、直播回放处理还是课程视频制作，都能轻松应对。
+                        </p>
+                        
+                        <h3 class="detail-subtitle">会员权益</h3>
+                        <p class="detail-text">
+                            - 解锁全部高级剪辑功能<br>
+                            - 去除视频水印<br>
+                            - 提供高清导出选项<br>
+                            - 云存储空间升级为10GB<br>
+                            - 专业模板库免费使用<br>
+                            - 7*24小时技术支持
+                        </p>
+                        
+                        <h3 class="detail-subtitle">使用说明</h3>
+                        <p class="detail-text">
+                            兑换成功后，系统会自动发送激活码到您的账号消息中心。登录视频剪辑工具APP，在"我的-会员中心"页面输入激活码即可激活会员权益。激活后立即生效，有效期自激活当日起计算。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 广告位1：详情区域后横幅 -->
+                <div class="ad-banner">
+                    <div class="ad-wrapper">
+                        <div class="ad-tag">广告</div>
+                        <img src="https://via.placeholder.com/345x80" alt="广告" class="ad-image">
+                    </div>
+                </div>
+                
+                <!-- 商品评价 -->
+                <div class="review-section">
+                    <div class="review-header">
+                        <div class="review-title">
+                            用户评价
+                            <span class="review-count">(324)</span>
+                        </div>
+                        <div class="review-more">
+                            <span>查看全部</span>
+                            <i class="icon" style="font-size: 16px;">keyboard_arrow_right</i>
+                        </div>
+                    </div>
+                    <div class="review-list">
+                        <div class="review-item">
+                            <div class="review-user">
+                                <div class="user-avatar"></div>
+                                <div>
+                                    <div class="user-name">张先生</div>
+                                    <div class="review-rating">
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                工具很好用，AI智能剪辑功能确实比以前省时间多了，自动识别精彩片段的准确度挺高。去水印功能也很实用，导出的视频质量不错，性价比很高！
+                            </div>
+                            <div class="review-date">2023.05.15</div>
+                        </div>
+                        <div class="review-item">
+                            <div class="review-user">
+                                <div class="user-avatar" style="background-image: url('https://img.freepik.com/free-vector/illustration-female-character-avatar_53876-43079.jpg');"></div>
+                                <div>
+                                    <div class="user-name">李女士</div>
+                                    <div class="review-rating">
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star_border</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                整体来说不错，比免费版功能强大多了。就是自动字幕偶尔会有点小错误，希望后续能改进优化。客服响应速度很快，兑换过程也很顺利。
+                            </div>
+                            <div class="review-date">2023.04.22</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 相关推荐 -->
+                <div class="recommend-section">
+                    <div class="recommend-header">相关推荐</div>
+                    <div class="recommend-list">
+                        <div class="recommend-item">
+                            <div class="recommend-image" style="background-image: url('https://img.freepik.com/free-vector/background-marketing-infographic_23-2149383810.jpg');"></div>
+                            <div class="recommend-content">
+                                <div class="recommend-title">AI配音工具会员</div>
+                                <div class="recommend-price">980<span class="recommend-price-unit">积分</span></div>
+                            </div>
+                        </div>
+                        <div class="recommend-item">
+                            <div class="recommend-image" style="background-image: url('https://img.freepik.com/free-vector/digital-marketing-team-with-laptops-marketing-planning-marketing-strategy-team-performance-impact-business-performance-concept_335657-340.jpg');"></div>
+                            <div class="recommend-content">
+                                <div class="recommend-title">图文转视频工具</div>
+                                <div class="recommend-price">1680<span class="recommend-price-unit">积分</span></div>
+                            </div>
+                        </div>
+                        <div class="recommend-item">
+                            <div class="recommend-image" style="background-image: url('https://img.freepik.com/free-vector/marketing-consulting-concept-illustration_114360-9027.jpg');"></div>
+                            <div class="recommend-content">
+                                <div class="recommend-title">视频封面生成工具</div>
+                                <div class="recommend-price">880<span class="recommend-price-unit">积分</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 广告位2：页面底部广告 -->
+                <div class="ad-card">
+                    <div class="ad-tag">广告</div>
+                    <div class="ad-content">
+                        <div class="ad-text">
+                            <div class="ad-title">新人限时礼包</div>
+                            <div class="ad-desc">注册送1000积分，立即兑换精美礼品</div>
+                        </div>
+                        <div class="ad-button">立即领取</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-space"></div>
+            </div>
+            
+            <!-- 底部操作栏 -->
+            <div class="action-bar">
+                <div class="action-icons">
+                    <div class="action-icon" onclick="window.location.href='points-mall.html'">
+                        <i class="icon">store</i>
+                        <div class="action-icon-label">商城</div>
+                    </div>
+                    <div class="action-icon">
+                        <i class="icon">favorite_border</i>
+                        <div class="action-icon-label">收藏</div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn btn-cart">加入购物车</button>
+                    <button class="action-btn btn-buy">立即兑换</button>
+                </div>
+            </div>
+            
+            <!-- 底部指示条 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+</body>
+</html> 

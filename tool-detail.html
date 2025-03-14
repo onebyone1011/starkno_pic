@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>网创课堂 - 工具详情</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            color: #333;
+            background-color: #f7f8fa;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 手机壳样式 */
+        .device-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #111;
+            border-radius: 50px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 15px;
+        }
+        
+        /* 刘海区域 */
+        .notch {
+            position: absolute;
+            width: 180px;
+            height: 30px;
+            background-color: #111;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: 10;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            width: 140px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 3px;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        /* 手机屏幕 */
+        .screen {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* App内容区域 */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: #333;
+            font-size: 12px;
+            background-color: #fff;
+        }
+        
+        .status-bar .time {
+            font-weight: 600;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* 导航栏 */
+        .nav-bar {
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            background-color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-back {
+            display: flex;
+            align-items: center;
+            color: #333;
+        }
+
+        .nav-title {
+            flex: 1;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            margin-right: 24px;
+        }
+        
+        /* 工具封面 */
+        .tool-cover {
+            width: 100%;
+            height: 200px;
+            background-image: url('https://img.freepik.com/free-vector/video-editing-software-interface-template_23-2148479875.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .tool-cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7));
+        }
+        
+        /* 工具信息 */
+        .tool-info {
+            padding: 16px;
+            background-color: #fff;
+        }
+        
+        .tool-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .tool-meta {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        
+        .tool-meta span {
+            display: flex;
+            align-items: center;
+            margin-right: 16px;
+        }
+        
+        .tool-meta i {
+            font-size: 16px;
+            margin-right: 4px;
+        }
+        
+        .tool-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .tool-tag {
+            padding: 4px 8px;
+            background-color: #f0f9f4;
+            color: #4caf92;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .tool-price {
+            font-size: 18px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+        
+        /* 工具描述 */
+        .tool-desc-section {
+            padding: 16px;
+            background-color: #fff;
+            margin-top: 8px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .tool-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* 功能亮点 */
+        .feature-list {
+            margin-top: 12px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            background-color: #f0f9f4;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: #4caf92;
+            flex-shrink: 0;
+        }
+        
+        .feature-content {
+            flex: 1;
+        }
+        
+        .feature-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .feature-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* 使用教程 */
+        .tutorial-list {
+            margin-top: 12px;
+        }
+        
+        .tutorial-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .tutorial-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background-color: #4caf92;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .tutorial-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            flex: 1;
+        }
+        
+        .tutorial-image {
+            width: 100%;
+            height: 120px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
+            background-image: url('https://img.freepik.com/free-vector/video-editing-illustration-concept_114360-2159.jpg');
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 8px;
+        }
+        
+        .tutorial-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* 用户评价 */
+        .review-list {
+            margin-top: 12px;
+        }
+        
+        .review-item {
+            margin-bottom: 16px;
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .reviewer-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background-color: #f5f5f5;
+            margin-right: 12px;
+            background-image: url('https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .reviewer-info {
+            flex: 1;
+        }
+        
+        .reviewer-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .review-date {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .review-rating {
+            display: flex;
+            margin-top: 2px;
+            color: #ff9800;
+        }
+        
+        .review-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* 相关推荐 */
+        .related-list {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .related-item {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .related-image {
+            width: 100%;
+            height: 80px;
+            background-color: #f5f5f5;
+            background-image: url('https://img.freepik.com/free-vector/content-writing-concept-illustration_114360-8279.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .related-content {
+            padding: 8px;
+        }
+        
+        .related-title {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .related-meta {
+            font-size: 10px;
+            color: #999;
+        }
+        
+        /* 底部操作栏 */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            margin: 0 15px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        
+        .action-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .action-item i {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        
+        .action-right {
+            margin-left: auto;
+        }
+        
+        .btn-primary {
+            background-color: #4caf92;
+            color: #fff;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* 图标 */
+        .icon {
+            font-family: "Material Icons";
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 辅助线 */
+        .divider {
+            height: 1px;
+            background-color: #f5f5f5;
+            margin: 16px 0;
+        }
+
+        /* 页面底部空白区域 */
+        .bottom-space {
+            height: 20px;
+        }
+        
+        /* 广告位样式 */
+        .ad-banner {
+            margin: 15px 16px;
+            position: relative;
+        }
+        
+        .ad-wrapper {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ad-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .ad-tag {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 4px;
+            z-index: 1;
+        }
+        
+        .ad-card {
+            margin: 15px 16px;
+            background: linear-gradient(to right, #ff9d4d, #ff7f2e);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            position: relative;
+        }
+        
+        .ad-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ad-text {
+            flex: 1;
+        }
+        
+        .ad-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .ad-desc {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .ad-button {
+            background-color: white;
+            color: #ff7f2e;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机壳 -->
+    <div class="device-container">
+        <!-- 刘海 -->
+        <div class="notch"></div>
+        
+        <!-- 屏幕 -->
+        <div class="screen">
+            <!-- App内容 -->
+            <div class="app-container">
+                <!-- 状态栏 -->
+                <div class="status-bar">
+                    <div class="time">14:30</div>
+                    <div class="icons">
+                        <span class="icon" style="font-size: 14px;">signal_cellular_alt</span>
+                        <span class="icon" style="font-size: 14px;">wifi</span>
+                        <span class="icon" style="font-size: 14px;">battery_full</span>
+                    </div>
+                </div>
+                
+                <!-- 导航栏 -->
+                <div class="nav-bar">
+                    <div class="nav-back" onclick="window.location.href='tools.html'">
+                        <span class="icon" style="font-size: 24px;">arrow_back</span>
+                    </div>
+                    <div class="nav-title">工具详情</div>
+                    <div class="nav-action">
+                        <span class="icon" style="font-size: 20px;">more_vert</span>
+                    </div>
+                </div>
+                
+                <!-- 工具封面 -->
+                <div class="tool-cover"></div>
+                
+                <!-- 工具信息 -->
+                <div class="tool-info">
+                    <h1 class="tool-title">智能视频剪辑工具</h1>
+                    <div class="tool-meta">
+                        <span>
+                            <i class="icon" style="font-size: 16px;">visibility</i>
+                            2.3万人使用
+                        </span>
+                        <span>
+                            <i class="icon" style="font-size: 16px;">star</i>
+                            4.9分
+                        </span>
+                        <span>
+                            <i class="icon" style="font-size: 16px;">cloud_download</i>
+                            1.5万次下载
+                        </span>
+                    </div>
+                    <div class="tool-tags">
+                        <span class="tool-tag">热门</span>
+                        <span class="tool-tag">新品</span>
+                        <span class="tool-tag">AI工具</span>
+                    </div>
+                    <div class="tool-price">免费</div>
+                </div>
+                
+                <!-- 工具描述 -->
+                <div class="tool-desc-section">
+                    <h2 class="section-title">工具介绍</h2>
+                    <div class="tool-desc">
+                        智能视频剪辑工具是一款基于AI技术的视频处理软件，能够帮助用户快速完成视频剪辑、添加特效、自动生成字幕等操作。无论是短视频创作、直播回放处理还是课程视频制作，都能轻松应对。
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <h2 class="section-title">功能亮点</h2>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <span class="icon">auto_awesome</span>
+                            </div>
+                            <div class="feature-content">
+                                <div class="feature-title">AI智能剪辑</div>
+                                <div class="feature-desc">自动识别精彩片段，一键生成精彩集锦</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <span class="icon">subtitles</span>
+                            </div>
+                            <div class="feature-content">
+                                <div class="feature-title">自动字幕</div>
+                                <div class="feature-desc">支持多种语言的语音识别，精准生成字幕</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <span class="icon">filter</span>
+                            </div>
+                            <div class="feature-content">
+                                <div class="feature-title">丰富特效</div>
+                                <div class="feature-desc">提供上百种滤镜和特效，打造专业视频效果</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <span class="icon">music_note</span>
+                            </div>
+                            <div class="feature-content">
+                                <div class="feature-title">版权音乐</div>
+                                <div class="feature-desc">内置海量无版权音乐和音效，随意使用</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 广告位1：工具介绍下方横幅 -->
+                <div class="ad-banner">
+                    <div class="ad-wrapper">
+                        <div class="ad-tag">广告</div>
+                        <img src="https://via.placeholder.com/345x80" alt="广告" class="ad-image">
+                    </div>
+                </div>
+                
+                <!-- 使用教程 -->
+                <div class="tool-desc-section">
+                    <h2 class="section-title">使用教程</h2>
+                    <div class="tutorial-list">
+                        <div class="tutorial-item">
+                            <div class="tutorial-header">
+                                <div class="step-number">1</div>
+                                <div class="tutorial-title">导入视频素材</div>
+                            </div>
+                            <div class="tutorial-image" style="background-image: url('https://img.freepik.com/free-vector/gradient-ui-ux-background_23-2149052117.jpg');"></div>
+                            <div class="tutorial-desc">
+                                点击"导入"按钮，从本地相册或云端选择需要处理的视频文件。支持MP4、MOV、AVI等常见格式。
+                            </div>
+                        </div>
+                        <div class="tutorial-item">
+                            <div class="tutorial-header">
+                                <div class="step-number">2</div>
+                                <div class="tutorial-title">智能剪辑</div>
+                            </div>
+                            <div class="tutorial-image" style="background-image: url('https://img.freepik.com/free-vector/gradient-infographic-template_23-2149163522.jpg');"></div>
+                            <div class="tutorial-desc">
+                                选择"智能剪辑"功能，软件将自动分析视频内容，识别精彩片段并生成初步剪辑版本。
+                            </div>
+                        </div>
+                        <div class="tutorial-item">
+                            <div class="tutorial-header">
+                                <div class="step-number">3</div>
+                                <div class="tutorial-title">添加特效与音乐</div>
+                            </div>
+                            <div class="tutorial-image" style="background-image: url('https://img.freepik.com/free-vector/hand-drawn-flat-design-infographic_23-2149320077.jpg');"></div>
+                            <div class="tutorial-desc">
+                                从素材库中选择合适的滤镜、转场效果和背景音乐，拖拽到时间轴上应用。
+                            </div>
+                        </div>
+                        <div class="tutorial-item">
+                            <div class="tutorial-header">
+                                <div class="step-number">4</div>
+                                <div class="tutorial-title">导出作品</div>
+                            </div>
+                            <div class="tutorial-image" style="background-image: url('https://img.freepik.com/free-vector/gradient-network-connection-background_23-2149011058.jpg');"></div>
+                            <div class="tutorial-desc">
+                                点击"导出"按钮，选择适合的分辨率和格式，等待视频渲染完成后即可分享或保存。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户评价 -->
+                <div class="tool-desc-section">
+                    <h2 class="section-title">用户评价</h2>
+                    <div class="review-list">
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-avatar" style="background-image: url('https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg');"></div>
+                                <div class="reviewer-info">
+                                    <div class="reviewer-name">张先生</div>
+                                    <div class="review-date">2023.05.15</div>
+                                    <div class="review-rating">
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                非常好用的视频剪辑工具，智能剪辑功能真的很省时间，自动字幕准确率也很高，对新手很友好，推荐使用！
+                            </div>
+                        </div>
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-avatar" style="background-image: url('https://img.freepik.com/free-vector/illustration-female-character-avatar_53876-43079.jpg');"></div>
+                                <div class="reviewer-info">
+                                    <div class="reviewer-name">李女士</div>
+                                    <div class="review-date">2023.04.22</div>
+                                    <div class="review-rating">
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star</span>
+                                        <span class="icon" style="font-size: 14px;">star_border</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                特效和音乐资源很丰富，操作也比较简单。就是有时候自动剪辑不太符合我的预期，需要手动调整。总体来说很实用。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 广告位2：评价区域下方广告 -->
+                <div class="ad-card">
+                    <div class="ad-tag">广告</div>
+                    <div class="ad-content">
+                        <div class="ad-text">
+                            <div class="ad-title">高级版限时优惠</div>
+                            <div class="ad-desc">解锁高级功能，首月仅需5元</div>
+                        </div>
+                        <div class="ad-button">立即升级</div>
+                    </div>
+                </div>
+                
+                <!-- 相关推荐 -->
+                <div class="tool-desc-section">
+                    <h2 class="section-title">相关推荐</h2>
+                    <div class="related-list">
+                        <div class="related-item">
+                            <div class="related-image" style="background-image: url('https://img.freepik.com/free-vector/background-marketing-infographic_23-2149383810.jpg');"></div>
+                            <div class="related-content">
+                                <div class="related-title">AI配音工具</div>
+                                <div class="related-meta">2.1万人使用</div>
+                            </div>
+                        </div>
+                        <div class="related-item">
+                            <div class="related-image" style="background-image: url('https://img.freepik.com/free-vector/digital-marketing-team-with-laptops-marketing-planning-marketing-strategy-team-performance-impact-business-performance-concept_335657-340.jpg');"></div>
+                            <div class="related-content">
+                                <div class="related-title">图文转视频</div>
+                                <div class="related-meta">1.8万人使用</div>
+                            </div>
+                        </div>
+                        <div class="related-item">
+                            <div class="related-image" style="background-image: url('https://img.freepik.com/free-vector/marketing-consulting-concept-illustration_114360-9027.jpg');"></div>
+                            <div class="related-content">
+                                <div class="related-title">视频封面生成</div>
+                                <div class="related-meta">1.5万人使用</div>
+                            </div>
+                        </div>
+                        <div class="related-item">
+                            <div class="related-image" style="background-image: url('https://img.freepik.com/free-vector/marketing-content-infographic-flat-design_23-2149377377.jpg');"></div>
+                            <div class="related-content">
+                                <div class="related-title">字幕提取工具</div>
+                                <div class="related-meta">9千人使用</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 底部操作栏 -->
+            <div class="actions-bar">
+                <div class="actions-left">
+                    <div class="action-btn" onclick="window.location.href='tools.html'">
+                        <i class="icon">home</i>
+                        <span>工具首页</span>
+                    </div>
+                    <div class="action-btn">
+                        <i class="icon">favorite_border</i>
+                        <span>收藏</span>
+                    </div>
+                    <div class="action-btn">
+                        <i class="icon">share</i>
+                        <span>分享</span>
+                    </div>
+                </div>
+                <div class="action-primary">
+                    <button>立即使用</button>
+                </div>
+            </div>
+            
+            <!-- 底部指示条 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+</body>
+</html> 

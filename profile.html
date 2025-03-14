@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>网创课堂 - 个人中心</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            color: #333;
+            background-color: #f7f8fa;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 手机壳样式 */
+        .device-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #111;
+            border-radius: 50px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 15px;
+        }
+        
+        /* 刘海区域 */
+        .notch {
+            position: absolute;
+            width: 180px;
+            height: 30px;
+            background-color: #111;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: 10;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            width: 140px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 3px;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        /* 手机屏幕 */
+        .screen {
+            width: 100%;
+            height: 100%;
+            background-color: #f7f8fa;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* App内容区域 */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: #fff;
+            font-size: 12px;
+            background-color: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+        
+        .status-bar .time {
+            font-weight: 600;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* 导航栏 */
+        .nav-bar {
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background-color: transparent;
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+        
+        .nav-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .nav-action {
+            color: #fff;
+        }
+        
+        /* 用户信息 */
+        .profile-header {
+            height: 220px;
+            background-color: #4caf92;
+            padding: 0 16px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://img.freepik.com/free-vector/gradient-network-connection-background_23-2149011058.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .user-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 36px;
+            background-color: #fff;
+            margin-right: 16px;
+            position: relative;
+            background-image: url('https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .vip-badge {
+            position: absolute;
+            right: -2px;
+            bottom: -2px;
+            width: 24px;
+            height: 24px;
+            background-color: #FFD700;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid #fff;
+        }
+        
+        .user-detail {
+            color: #fff;
+        }
+        
+        .user-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-level {
+            font-size: 12px;
+            padding: 2px 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+        
+        .user-signature {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+        
+        .profile-action {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            font-size: 12px;
+        }
+        
+        .profile-action i {
+            font-size: 14px;
+            margin-right: 4px;
+        }
+        
+        /* 数据概览 */
+        .data-overview {
+            background-color: #fff;
+            display: flex;
+            padding: 16px 0;
+            margin-bottom: 12px;
+        }
+        
+        .data-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .data-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 60%;
+            background-color: #f0f0f0;
+        }
+        
+        .data-value {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        
+        .data-label {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* 功能区块 */
+        .feature-section {
+            background-color: #fff;
+            margin-bottom: 12px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .section-more {
+            font-size: 13px;
+            color: #999;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-content {
+            padding: 16px;
+        }
+        
+        /* 我的课程 */
+        .course-grid {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .course-grid::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .course-item {
+            flex: 0 0 140px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .course-cover {
+            height: 80px;
+            background-color: #f0f0f0;
+            background-image: url('https://img.freepik.com/free-vector/online-tutorials-concept_52683-37480.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .course-info {
+            padding: 8px;
+        }
+        
+        .course-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 36px;
+        }
+        
+        .course-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .progress-text {
+            color: #4caf92;
+        }
+        
+        .progress-bar {
+            height: 3px;
+            background-color: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #4caf92;
+        }
+        
+        /* 功能网格 */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 0;
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background-color: #f0f9f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            color: #4caf92;
+        }
+        
+        .feature-name {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 菜单列表 */
+        .menu-list {
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: #666;
+        }
+        
+        .menu-title {
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .menu-right {
+            display: flex;
+            align-items: center;
+            color: #999;
+        }
+        
+        .menu-value {
+            font-size: 14px;
+            margin-right: 4px;
+        }
+        
+        .menu-arrow {
+            color: #ccc;
+        }
+        
+        /* VIP卡片 */
+        .vip-card {
+            background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+        }
+        
+        .vip-info {
+            color: #fff;
+        }
+        
+        .vip-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .vip-title i {
+            font-size: 20px;
+            margin-right: 4px;
+        }
+        
+        .vip-desc {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .vip-button {
+            padding: 8px 16px;
+            background-color: #fff;
+            border-radius: 20px;
+            color: #FF9800;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* 底部选项卡 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            display: flex;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            margin: 0 15px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            padding-bottom: 20px;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 8px;
+            color: #999;
+        }
+        
+        .tab-item.active {
+            color: #4caf92;
+        }
+        
+        .tab-icon {
+            margin-bottom: 4px;
+        }
+        
+        .tab-label {
+            font-size: 11px;
+        }
+        
+        /* 图标 */
+        .icon {
+            font-family: "Material Icons";
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 页面底部空白区域 */
+        .bottom-space {
+            height: 20px;
+        }
+        
+        /* 广告位样式 */
+        .ad-banner {
+            margin: 15px 16px;
+            position: relative;
+        }
+        
+        .ad-wrapper {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ad-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .ad-tag {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 4px;
+            z-index: 1;
+        }
+        
+        .ad-card {
+            margin: 15px 16px;
+            background: linear-gradient(to right, #ff9d4d, #ff7f2e);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            position: relative;
+        }
+        
+        .ad-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ad-text {
+            flex: 1;
+        }
+        
+        .ad-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .ad-desc {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .ad-button {
+            background-color: white;
+            color: #ff7f2e;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .ad-fullwidth {
+            margin: 15px 16px;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ad-image-full {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机壳 -->
+    <div class="device-container">
+        <!-- 刘海 -->
+        <div class="notch"></div>
+        
+        <!-- 屏幕 -->
+        <div class="screen">
+            <!-- App内容 -->
+            <div class="app-container">
+                <!-- 用户信息头部 -->
+                <div class="profile-header">
+                    <!-- 状态栏 -->
+                    <div class="status-bar">
+                        <div class="time">14:30</div>
+                        <div class="icons">
+                            <span class="icon" style="font-size: 14px;">signal_cellular_alt</span>
+                            <span class="icon" style="font-size: 14px;">wifi</span>
+                            <span class="icon" style="font-size: 14px;">battery_full</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 导航栏 -->
+                    <div class="nav-bar">
+                        <div class="nav-title">个人中心</div>
+                        <div class="nav-actions">
+                            <div class="nav-action">
+                                <span class="icon" style="font-size: 22px;">settings</span>
+                            </div>
+                            <div class="nav-action">
+                                <span class="icon" style="font-size: 22px;">notifications_none</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 用户信息 -->
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <div class="vip-badge">VIP</div>
+                        </div>
+                        <div class="user-detail">
+                            <div class="user-name">
+                                张明
+                                <span class="user-level">Lv.4</span>
+                            </div>
+                            <div class="user-signature">让学习成为习惯，让成长更有价值</div>
+                            <div class="profile-action">
+                                <i class="icon" style="font-size: 14px;">edit</i>
+                                <span>编辑资料</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 广告位1：用户信息下方横幅 -->
+                <div class="ad-banner">
+                    <div class="ad-wrapper">
+                        <div class="ad-tag">广告</div>
+                        <img src="https://via.placeholder.com/345x80" alt="广告" class="ad-image">
+                    </div>
+                </div>
+                
+                <!-- 数据概览 -->
+                <div class="data-overview">
+                    <div class="data-item" onclick="window.location.href='points-detail.html'">
+                        <div class="data-value">3,280</div>
+                        <div class="data-label">积分</div>
+                    </div>
+                    <div class="data-item" onclick="window.location.href='course-list.html'">
+                        <div class="data-value">8</div>
+                        <div class="data-label">课程</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">16</div>
+                        <div class="data-label">收藏</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">24</div>
+                        <div class="data-label">足迹</div>
+                    </div>
+                </div>
+                
+                <!-- VIP会员卡片 -->
+                <div class="feature-section">
+                    <div class="section-content" style="padding-bottom: 12px;">
+                        <div class="vip-card">
+                            <div class="vip-info">
+                                <div class="vip-title">
+                                    <i class="icon">stars</i>
+                                    <span>高级会员</span>
+                                </div>
+                                <div class="vip-desc">解锁全部高级课程和工具特权</div>
+                            </div>
+                            <div class="vip-button">立即开通</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我的课程 -->
+                <div class="feature-section">
+                    <div class="section-header">
+                        <div class="section-title">我的课程</div>
+                        <div class="section-more" onclick="window.location.href='course-list.html'">
+                            <span>全部</span>
+                            <i class="icon" style="font-size: 18px;">chevron_right</i>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="course-grid">
+                            <div class="course-item" onclick="window.location.href='course-detail.html'">
+                                <div class="course-cover"></div>
+                                <div class="course-info">
+                                    <div class="course-name">Web前端开发入门到精通</div>
+                                    <div class="course-progress">
+                                        <div class="progress-text">已学70%</div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 70%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="course-item" onclick="window.location.href='course-detail.html'">
+                                <div class="course-cover" style="background-image: url('https://img.freepik.com/free-vector/webinar-concept-illustration_114360-4764.jpg');"></div>
+                                <div class="course-info">
+                                    <div class="course-name">UI设计基础与实战</div>
+                                    <div class="course-progress">
+                                        <div class="progress-text">已学30%</div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 30%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="course-item" onclick="window.location.href='course-detail.html'">
+                                <div class="course-cover" style="background-image: url('https://img.freepik.com/free-vector/gradient-ui-ux-background_23-2149052117.jpg');"></div>
+                                <div class="course-info">
+                                    <div class="course-name">Python数据分析实战</div>
+                                    <div class="course-progress">
+                                        <div class="progress-text">已学15%</div>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 15%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 常用工具 -->
+                <div class="feature-section">
+                    <div class="section-header">
+                        <div class="section-title">常用功能</div>
+                    </div>
+                    <div class="section-content" style="padding: 8px 0;">
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="icon">shopping_cart</i>
+                                </div>
+                                <div class="feature-name">我的订单</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="icon">shopping_bag</i>
+                                </div>
+                                <div class="feature-name">商城订单</div>
+                            </div>
+                            <div class="feature-item" onclick="window.location.href='points-mall.html'">
+                                <div class="feature-icon">
+                                    <i class="icon">redeem</i>
+                                </div>
+                                <div class="feature-name">积分商城</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="icon">credit_card</i>
+                                </div>
+                                <div class="feature-name">我的卡包</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="icon">favorite</i>
+                                </div>
+                                <div class="feature-name">我的收藏</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="icon">history</i>
+                                </div>
+                                <div class="feature-name">学习记录</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="icon">task_alt</i>
+                                </div>
+                                <div class="feature-name">每日任务</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="icon">help</i>
+                                </div>
+                                <div class="feature-name">帮助中心</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 系统设置 -->
+                <div class="feature-section">
+                    <div class="menu-list">
+                        <div class="menu-item">
+                            <div class="menu-left">
+                                <div class="menu-icon">
+                                    <i class="icon" style="font-size: 20px;">support_agent</i>
+                                </div>
+                                <div class="menu-title">联系客服</div>
+                            </div>
+                            <div class="menu-right">
+                                <div class="menu-value">工作日 9:00-18:00</div>
+                                <div class="menu-arrow">
+                                    <i class="icon" style="font-size: 20px;">chevron_right</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-left">
+                                <div class="menu-icon">
+                                    <i class="icon" style="font-size: 20px;">feedback</i>
+                                </div>
+                                <div class="menu-title">意见反馈</div>
+                            </div>
+                            <div class="menu-right">
+                                <div class="menu-arrow">
+                                    <i class="icon" style="font-size: 20px;">chevron_right</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-left">
+                                <div class="menu-icon">
+                                    <i class="icon" style="font-size: 20px;">info</i>
+                                </div>
+                                <div class="menu-title">关于我们</div>
+                            </div>
+                            <div class="menu-right">
+                                <div class="menu-value">v2.5.1</div>
+                                <div class="menu-arrow">
+                                    <i class="icon" style="font-size: 20px;">chevron_right</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 广告位2：页面底部广告 -->
+                <div class="ad-card">
+                    <div class="ad-tag">广告</div>
+                    <div class="ad-content">
+                        <div class="ad-text">
+                            <div class="ad-title">推荐好友送会员</div>
+                            <div class="ad-desc">邀请好友注册，双方各得7天会员</div>
+                        </div>
+                        <div class="ad-button">立即邀请</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-space"></div>
+            </div>
+            
+            <!-- 底部选项卡 -->
+            <div class="tab-bar">
+                <div class="tab-item">
+                    <i class="icon tab-icon">home</i>
+                    <div class="tab-label">首页</div>
+                </div>
+                <div class="tab-item" onclick="window.location.href='course-list.html'">
+                    <i class="icon tab-icon">school</i>
+                    <div class="tab-label">课程</div>
+                </div>
+                <div class="tab-item" onclick="window.location.href='tools.html'">
+                    <i class="icon tab-icon">category</i>
+                    <div class="tab-label">工具</div>
+                </div>
+                <div class="tab-item active">
+                    <i class="icon tab-icon">person</i>
+                    <div class="tab-label">我的</div>
+                </div>
+            </div>
+            
+            <!-- 底部指示条 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+</body>
+</html> 

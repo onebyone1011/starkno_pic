@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>网创课堂 - 工具箱</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            color: #333;
+            background-color: #f7f8fa;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 手机壳样式 */
+        .device-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: #111;
+            border-radius: 50px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 15px;
+        }
+        
+        /* 刘海区域 */
+        .notch {
+            position: absolute;
+            width: 180px;
+            height: 30px;
+            background-color: #111;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: 10;
+        }
+        
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            width: 140px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 3px;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        /* 手机屏幕 */
+        .screen {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* App内容区域 */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+        }
+        
+        /* 状态栏 */
+        .status-bar {
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: #333;
+            font-size: 12px;
+            background-color: #fff;
+        }
+        
+        .status-bar .time {
+            font-weight: 600;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* 搜索栏 */
+        .search-bar {
+            padding: 12px 16px;
+            background-color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+        
+        .search-input {
+            height: 36px;
+            background-color: #f7f8fa;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .search-icon {
+            margin-right: 6px;
+            font-size: 18px;
+            color: #999;
+        }
+        
+        /* 工具分类 */
+        .tool-categories {
+            padding: 16px;
+            background-color: #fff;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+        
+        .category-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 8px;
+            background-color: #f7f8fa;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        
+        .category-item:active {
+            background-color: #e8f5e9;
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #4caf92;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        
+        .category-icon i {
+            font-size: 20px;
+            color: #fff;
+        }
+        
+        .category-name {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+        
+        /* 工具列表 */
+        .tool-list {
+            padding: 0;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .section-title span {
+            font-size: 12px;
+            color: #999;
+            font-weight: normal;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .tool-card {
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        
+        .tool-card:active {
+            transform: scale(0.98);
+        }
+        
+        .tool-image {
+            width: 100%;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .tool-content {
+            padding: 12px;
+        }
+        
+        .tool-title {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .tool-desc {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .tool-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .tool-count {
+            display: flex;
+            align-items: center;
+        }
+        
+        .tool-count i {
+            font-size: 14px;
+            margin-right: 4px;
+        }
+        
+        .tool-price {
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+        
+        /* 工具区域样式 */
+        .tool-section {
+            background-color: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0 16px;
+            margin-bottom: 20px;
+        }
+        
+        .section-header {
+            padding-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .section-more {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* 新上线工具样式 */
+        .tool-row {
+            display: flex;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 16px;
+            transition: transform 0.2s;
+        }
+        
+        .tool-row:active {
+            transform: scale(0.98);
+        }
+        
+        .tool-row .tool-image {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+        
+        .tool-row .tool-content {
+            flex: 1;
+            padding: 12px;
+        }
+        
+        /* Tab栏 */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #eee;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            margin: 0 15px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: 100;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 20%;
+            color: #999;
+        }
+        
+        .tab-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        
+        .tab-name {
+            font-size: 10px;
+        }
+        
+        .tab-item.active {
+            color: #4caf92;
+        }
+        
+        /* 图标 */
+        .icon {
+            font-family: "Material Icons";
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 页面底部空白区域 */
+        .bottom-space {
+            height: 20px;
+        }
+        
+        /* 广告位样式 */
+        .ad-banner {
+            margin: 15px 16px;
+            position: relative;
+        }
+        
+        .ad-wrapper {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ad-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .ad-tag {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 4px;
+            z-index: 1;
+        }
+        
+        .ad-card {
+            margin: 15px 16px;
+            background: linear-gradient(to right, #ff9d4d, #ff7f2e);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            position: relative;
+        }
+        
+        .ad-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ad-text {
+            flex: 1;
+        }
+        
+        .ad-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .ad-desc {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .ad-button {
+            background-color: white;
+            color: #ff7f2e;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- 手机壳 -->
+    <div class="device-container">
+        <!-- 刘海 -->
+        <div class="notch"></div>
+        
+        <!-- 屏幕 -->
+        <div class="screen">
+            <!-- App内容 -->
+            <div class="app-container">
+                <!-- 状态栏 -->
+                <div class="status-bar">
+                    <div class="time">14:30</div>
+                    <div class="icons">
+                        <span class="icon" style="font-size: 14px;">signal_cellular_alt</span>
+                        <span class="icon" style="font-size: 14px;">wifi</span>
+                        <span class="icon" style="font-size: 14px;">battery_full</span>
+                    </div>
+                </div>
+                
+                <!-- 搜索栏 -->
+                <div class="search-bar">
+                    <div class="search-input">
+                        <span class="icon search-icon">search</span>
+                        <span>搜索工具</span>
+                    </div>
+                </div>
+                
+                <!-- 工具分类 -->
+                <div class="tool-categories">
+                    <div class="category-item">
+                        <div class="category-icon">
+                            <i class="icon">video_library</i>
+                        </div>
+                        <div class="category-name">视频工具</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">
+                            <i class="icon">image</i>
+                        </div>
+                        <div class="category-name">图片工具</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">
+                            <i class="icon">edit</i>
+                        </div>
+                        <div class="category-name">文案工具</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">
+                            <i class="icon">analytics</i>
+                        </div>
+                        <div class="category-name">数据分析</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">
+                            <i class="icon">trending_up</i>
+                        </div>
+                        <div class="category-name">营销工具</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">
+                            <i class="icon">group</i>
+                        </div>
+                        <div class="category-name">社群工具</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">
+                            <i class="icon">store</i>
+                        </div>
+                        <div class="category-name">电商工具</div>
+                    </div>
+                    <div class="category-item">
+                        <div class="category-icon">
+                            <i class="icon">more_horiz</i>
+                        </div>
+                        <div class="category-name">更多工具</div>
+                    </div>
+                </div>
+                
+                <!-- 广告位1：分类导航下方横幅 -->
+                <div class="ad-banner">
+                    <div class="ad-wrapper">
+                        <div class="ad-tag">广告</div>
+                        <img src="https://via.placeholder.com/345x80" alt="广告" class="ad-image">
+                    </div>
+                </div>
+                
+                <!-- 热门工具 -->
+                <div class="tool-section">
+                    <div class="section-header">
+                        <div class="section-title">热门工具</div>
+                        <div class="section-more">
+                            查看全部
+                            <span class="icon" style="font-size: 16px;">chevron_right</span>
+                        </div>
+                    </div>
+                    <div class="tool-grid">
+                        <div class="tool-card" onclick="window.location.href='tool-detail.html'">
+                            <div class="tool-image" style="background-image: url('https://img.freepik.com/free-vector/video-editing-software-interface-template_23-2148479875.jpg');"></div>
+                            <div class="tool-content">
+                                <div class="tool-title">智能视频剪辑工具</div>
+                                <div class="tool-desc">一键剪辑视频，自动添加字幕和特效</div>
+                                <div class="tool-meta">
+                                    <div class="tool-count">
+                                        <i class="icon" style="font-size: 14px;">visibility</i>
+                                        <span>2.3万</span>
+                                    </div>
+                                    <div class="tool-price">免费</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tool-card" onclick="window.location.href='tool-detail.html'">
+                            <div class="tool-image" style="background-image: url('https://img.freepik.com/free-vector/social-media-marketing-concept-illustration_114360-660.jpg');"></div>
+                            <div class="tool-content">
+                                <div class="tool-title">AI文案助手</div>
+                                <div class="tool-desc">智能生成营销文案，支持多种风格</div>
+                                <div class="tool-meta">
+                                    <div class="tool-count">
+                                        <i class="icon" style="font-size: 14px;">visibility</i>
+                                        <span>1.5万</span>
+                                    </div>
+                                    <div class="tool-price">免费</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tool-card" onclick="window.location.href='tool-detail.html'">
+                            <div class="tool-image" style="background-image: url('https://img.freepik.com/free-vector/live-streaming-concept-illustration_114360-667.jpg');"></div>
+                            <div class="tool-content">
+                                <div class="tool-title">直播数据分析</div>
+                                <div class="tool-desc">实时分析直播数据，优化直播效果</div>
+                                <div class="tool-meta">
+                                    <div class="tool-count">
+                                        <i class="icon" style="font-size: 14px;">visibility</i>
+                                        <span>3.8万</span>
+                                    </div>
+                                    <div class="tool-price">免费</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tool-card" onclick="window.location.href='tool-detail.html'">
+                            <div class="tool-image" style="background-image: url('https://img.freepik.com/free-vector/data-analysis-concept-illustration_114360-8263.jpg');"></div>
+                            <div class="tool-content">
+                                <div class="tool-title">社群运营助手</div>
+                                <div class="tool-desc">智能管理社群，提升运营效率</div>
+                                <div class="tool-meta">
+                                    <div class="tool-count">
+                                        <i class="icon" style="font-size: 14px;">visibility</i>
+                                        <span>1.2万</span>
+                                    </div>
+                                    <div class="tool-price">免费</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 新上线工具 -->
+                <div class="tool-section">
+                    <div class="section-header">
+                        <div class="section-title">新上线</div>
+                        <div class="section-more">
+                            查看全部
+                            <span class="icon" style="font-size: 16px;">chevron_right</span>
+                        </div>
+                    </div>
+                    <div class="tool-list">
+                        <div class="tool-row" onclick="window.location.href='tool-detail.html'">
+                            <div class="tool-image" style="background-image: url('https://img.freepik.com/free-vector/content-writing-concept-illustration_114360-8279.jpg');"></div>
+                            <div class="tool-content">
+                                <div class="tool-title">图片智能处理</div>
+                                <div class="tool-desc">一键美化图片，支持多种滤镜</div>
+                                <div class="tool-meta">
+                                    <div class="tool-count">
+                                        <i class="icon" style="font-size: 14px;">visibility</i>
+                                        <span>8千</span>
+                                    </div>
+                                    <div class="tool-price">免费</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tool-row" onclick="window.location.href='tool-detail.html'">
+                            <div class="tool-image" style="background-image: url('https://img.freepik.com/free-vector/ecommerce-web-page-concept-illustration_114360-8204.jpg');"></div>
+                            <div class="tool-content">
+                                <div class="tool-title">电商数据分析</div>
+                                <div class="tool-desc">分析店铺数据，优化运营策略</div>
+                                <div class="tool-meta">
+                                    <div class="tool-count">
+                                        <i class="icon" style="font-size: 14px;">visibility</i>
+                                        <span>5千</span>
+                                    </div>
+                                    <div class="tool-price">免费</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 广告位2：页面底部广告 -->
+                <div class="ad-card">
+                    <div class="ad-tag">广告</div>
+                    <div class="ad-content">
+                        <div class="ad-text">
+                            <div class="ad-title">开通会员尊享特权</div>
+                            <div class="ad-desc">所有高级工具无限次使用，首月仅9.9元</div>
+                        </div>
+                        <div class="ad-button">立即开通</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-space"></div>
+            </div>
+            
+            <!-- Tab栏 -->
+            <div class="tab-bar">
+                <div class="tab-item" onclick="window.location.href='home.html'">
+                    <div class="tab-icon">
+                        <span class="icon">home</span>
+                    </div>
+                    <div class="tab-name">首页</div>
+                </div>
+                <div class="tab-item" onclick="window.location.href='course-list.html'">
+                    <div class="tab-icon">
+                        <span class="icon">play_circle_outline</span>
+                    </div>
+                    <div class="tab-name">课程</div>
+                </div>
+                <div class="tab-item active">
+                    <div class="tab-icon">
+                        <span class="icon">build</span>
+                    </div>
+                    <div class="tab-name">工具</div>
+                </div>
+                <div class="tab-item" onclick="window.location.href='points-mall.html'">
+                    <div class="tab-icon">
+                        <span class="icon">redeem</span>
+                    </div>
+                    <div class="tab-name">商城</div>
+                </div>
+                <div class="tab-item" onclick="window.location.href='profile.html'">
+                    <div class="tab-icon">
+                        <span class="icon">person_outline</span>
+                    </div>
+                    <div class="tab-name">我的</div>
+                </div>
+            </div>
+            
+            <!-- 底部指示条 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+</body>
+</html> 
